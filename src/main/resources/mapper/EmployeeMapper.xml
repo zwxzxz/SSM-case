@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.zwx.dao.EmployeeMapper">
+    <resultMap id="BaseResultMap" type="top.zwx.bean.Employee">
+        <id column="emp_id" jdbcType="INTEGER" property="empId"/>
+        <result column="emp_name" jdbcType="VARCHAR" property="empName"/>
+        <result column="gender" jdbcType="CHAR" property="gender"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
+        <result column="d_id" jdbcType="INTEGER" property="dId"/>
+    </resultMap>
+    <resultMap id="WithDept" type="employee">
+        <id column="emp_id" jdbcType="INTEGER" property="empId"/>
+        <result column="emp_name" jdbcType="VARCHAR" property="empName"/>
+        <result column="gender" jdbcType="CHAR" property="gender"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
+        <result column="d_id" jdbcType="INTEGER" property="dId"/>
+        <association property="dept" javaType="dept">
+            <result property="deptId" column="dept_id"/>
+            <result property="deptName" column="dept_name"/>
+        </association>
+
+    </resultMap>
+    <sql id="Example_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="("
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Update_By_Example_Where_Clause">
+        <where>
+            <foreach collection="example.oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="("
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Base_Column_List">
+        emp_id, emp_name, gender, email, d_id
+    </sql>
+    <sql id="WithDept_Column_List">
+        emp_id, emp_name, gender, email, d_id, dept_id, dept_name
+    </sql>
+    <select id="selectByExampleWithDept" resultMap="WithDept">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="WithDept_Column_List"/>
+        from t_emp left join t_dept  on t_emp.d_id = t_dept.dept_id
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+    <select id="selectByPrimaryKeyWithDept" resultMap="WithDept">
+        select
+        <include refid="WithDept_Column_List"/>
+        from t_emp left join t_dept  on t_emp.d_id = t_dept.dept_id
+        where emp_id = #{empId,jdbcType=INTEGER}
+    </select>
+    <select id="selectByExample" parameterType="top.zwx.bean.EmployeeExample" resultMap="BaseResultMap">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List"/>
+        from t_emp
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from t_emp
+        where emp_id = #{empId,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete
+        from t_emp
+        where emp_id = #{empId,jdbcType=INTEGER}
+    </delete>
+    <delete id="deleteByExample" parameterType="top.zwx.bean.EmployeeExample">
+        delete from t_emp
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </delete>
+    <insert id="insert" parameterType="top.zwx.bean.Employee">
+        insert into t_emp (emp_id, emp_name, gender,
+                           email, d_id)
+        values (#{empId,jdbcType=INTEGER}, #{empName,jdbcType=VARCHAR}, #{gender,jdbcType=CHAR},
+                #{email,jdbcType=VARCHAR}, #{dId,jdbcType=INTEGER})
+    </insert>
+    <insert id="insertSelective" parameterType="top.zwx.bean.Employee">
+        insert into t_emp
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="empId != null">
+                emp_id,
+            </if>
+            <if test="empName != null">
+                emp_name,
+            </if>
+            <if test="gender != null">
+                gender,
+            </if>
+            <if test="email != null">
+                email,
+            </if>
+            <if test="dId != null">
+                d_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="empId != null">
+                #{empId,jdbcType=INTEGER},
+            </if>
+            <if test="empName != null">
+                #{empName,jdbcType=VARCHAR},
+            </if>
+            <if test="gender != null">
+                #{gender,jdbcType=CHAR},
+            </if>
+            <if test="email != null">
+                #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="dId != null">
+                #{dId,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+    <select id="countByExample" parameterType="top.zwx.bean.EmployeeExample" resultType="java.lang.Long">
+        select count(*) from t_emp
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </select>
+    <update id="updateByExampleSelective" parameterType="map">
+        update t_emp
+        <set>
+            <if test="row.empId != null">
+                emp_id = #{row.empId,jdbcType=INTEGER},
+            </if>
+            <if test="row.empName != null">
+                emp_name = #{row.empName,jdbcType=VARCHAR},
+            </if>
+            <if test="row.gender != null">
+                gender = #{row.gender,jdbcType=CHAR},
+            </if>
+            <if test="row.email != null">
+                email = #{row.email,jdbcType=VARCHAR},
+            </if>
+            <if test="row.dId != null">
+                d_id = #{row.dId,jdbcType=INTEGER},
+            </if>
+        </set>
+        <if test="example != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByExample" parameterType="map">
+        update t_emp
+        set emp_id = #{row.empId,jdbcType=INTEGER},
+        emp_name = #{row.empName,jdbcType=VARCHAR},
+        gender = #{row.gender,jdbcType=CHAR},
+        email = #{row.email,jdbcType=VARCHAR},
+        d_id = #{row.dId,jdbcType=INTEGER}
+        <if test="example != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByPrimaryKeySelective" parameterType="top.zwx.bean.Employee">
+        update t_emp
+        <set>
+            <if test="empName != null">
+                emp_name = #{empName,jdbcType=VARCHAR},
+            </if>
+            <if test="gender != null">
+                gender = #{gender,jdbcType=CHAR},
+            </if>
+            <if test="email != null">
+                email = #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="dId != null">
+                d_id = #{dId,jdbcType=INTEGER},
+            </if>
+        </set>
+        where emp_id = #{empId,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="top.zwx.bean.Employee">
+        update t_emp
+        set emp_name = #{empName,jdbcType=VARCHAR},
+            gender   = #{gender,jdbcType=CHAR},
+            email    = #{email,jdbcType=VARCHAR},
+            d_id     = #{dId,jdbcType=INTEGER}
+        where emp_id = #{empId,jdbcType=INTEGER}
+    </update>
+</mapper>

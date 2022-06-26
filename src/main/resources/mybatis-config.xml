@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+
+<configuration>
+    <!--引入配置文件-->
+    <properties resource="jdbc.properties"/>
+    
+    <settings>
+        <!--将自动映射为驼峰，emp_name -> empName-->
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+    </settings>
+
+    <!--设置实体类别名-->
+    <typeAliases>
+        <package name="top.zwx.bean"/>
+    </typeAliases>
+
+    <!--插件-->
+    <plugins>
+        <plugin interceptor="com.github.pagehelper.PageInterceptor">
+            <!--页数小于1，显示第一页-->
+            <property name="reasonable" value="true"/>
+        </plugin>
+    </plugins>
+
+
+
+
+</configuration>
